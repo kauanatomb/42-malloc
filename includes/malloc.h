@@ -60,6 +60,7 @@ t_zone  *create_zone(size_t zone_size, t_zone_type type);
 */
 t_block *find_free_block(t_zone *zone, size_t size);
 void    split_block(t_block *block, size_t size);
+void    *get_block_payload(t_block *block);
 
 /*
 ** utils
