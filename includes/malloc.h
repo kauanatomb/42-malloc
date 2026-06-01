@@ -47,9 +47,11 @@ typedef struct s_malloc
 extern t_malloc g_malloc;
 
 /*
-** malloc API
+** implementations
 */
 void    *malloc(size_t size);
+void    free(void *ptr);
+void    check_leaks(void);
 
 /*
 ** zone
