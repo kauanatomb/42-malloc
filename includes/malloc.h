@@ -5,6 +5,7 @@
 # include <sys/mman.h>
 # include <stdint.h>
 # include <stddef.h>
+# include <stdio.h>
 
 # define ALIGNMENT 16
 

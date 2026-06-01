@@ -5,13 +5,19 @@ void *get_block_payload(t_block *block) {
 }
 
 void    split_block(t_block *block, size_t size) {
-    size_t remaining = block - size - sizeof(t_block);
+    if (block->size < size + sizeof(t_block) + ALIGNMENT)
+        return;
+
+    size_t remaining = block->size - size - sizeof(t_block);
     void *payload = block + 1;
     t_block * new_block = (t_block *)((char *)payload + size);
 
     new_block->size = remaining;
     new_block->free = 1;
     new_block->next = block->next;
+
+    printf("BLOCK size=%zu remaining=%zu\n", block->size, remaining);
+    printf("BLOCK addr=%p new_block=%p\n", block, new_block);
 
     block->size = size;
     block->next = new_block;
