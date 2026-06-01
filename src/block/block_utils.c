@@ -15,7 +15,6 @@ void    split_block(t_block *block, size_t size) {
 
     block->size = size;
     block->next = new_block;
-
 }
 
 t_block *find_free_block(t_zone *zone, size_t size) {

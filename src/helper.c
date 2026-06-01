@@ -26,6 +26,16 @@ t_zone_type get_zone_type(size_t size) {
         return LARGE;
 }
 
+t_zone **get_zones_list(t_zone_type type) {
+    if (type == TINY)
+        return &g_malloc.tiny_zones;
+
+    if (type == SMALL)
+        return &g_malloc.small_zones;
+
+    return &g_malloc.large_zones;
+}
+
 // create zone with mmap and initial block
 t_zone  *create_zone(size_t zone_size, t_zone_type type) {
     t_zone *zone = mmap(NULL, zone_size, PROT_READ | PROT_WRITE,
