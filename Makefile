@@ -1,6 +1,6 @@
 NAME = malloc
 SRC = src/main.c src/malloc.c src/helper.c src/globals.c src/block/block_utils.c \
-		src/free.c
+		src/free.c src/realloc.c
 OBJ = $(SRC:.c=.o)
 
 CC = cc

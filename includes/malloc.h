@@ -5,7 +5,8 @@
 # include <sys/mman.h>
 # include <stdint.h>
 # include <stddef.h>
-# include <stdio.h>
+#include "libft.h" 
+# include <stdio.h> // TODO: remove after debugging
 
 # define ALIGNMENT 16
 
@@ -52,6 +53,7 @@ extern t_malloc g_malloc;
 void    *malloc(size_t size);
 void    free(void *ptr);
 void    check_leaks(void);
+void    *realloc(void *ptr, size_t size);
 
 /*
 ** zone
