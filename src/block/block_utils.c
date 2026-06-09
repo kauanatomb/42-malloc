@@ -16,9 +16,6 @@ void    split_block(t_block *block, size_t size) {
     new_block->free = 1;
     new_block->next = block->next;
 
-    printf("BLOCK size=%zu remaining=%zu\n", block->size, remaining);
-    printf("BLOCK addr=%p new_block=%p\n", block, new_block);
-
     block->size = size;
     block->next = new_block;
 }

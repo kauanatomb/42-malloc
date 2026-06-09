@@ -53,10 +53,5 @@ t_zone  *create_zone(size_t zone_size, t_zone_type type) {
     block->next = NULL;
     zone->blocks = block;
 
-    t_block *b = zone->blocks;
-
-    printf("INIT BLOCK:\n");
-    printf("addr=%p size=%zu free=%d next=%p\n",
-        b, b->size, b->free, b->next);
     return zone;
 }
