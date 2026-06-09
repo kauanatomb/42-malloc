@@ -56,6 +56,7 @@ void    free(void *ptr);
 void    check_leaks(void);
 void    *realloc(void *ptr, size_t size);
 void    show_alloc_mem(void);
+void    cleanup_empty_zones(void);
 
 /*
 ** zone

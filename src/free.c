@@ -15,6 +15,8 @@ void    free(void *ptr) {
         block->next = block->next->next;
     }
 
+    cleanup_empty_zones();
+
     pthread_mutex_unlock(&g_malloc_lock);
 }
 

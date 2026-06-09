@@ -6,7 +6,7 @@ NAME = libft_malloc_$(HOSTTYPE).so
 LINK_NAME = libft_malloc.so
 
 SRC = src/malloc.c src/helper.c src/globals.c src/block/block_utils.c \
-		src/free.c src/realloc.c src/show_alloc_mem.c
+		src/free.c src/realloc.c src/show_alloc_mem.c src/zone_cleanup.c
 OBJ = $(SRC:.c=.o)
 
 CC = cc
