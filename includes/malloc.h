@@ -5,8 +5,8 @@
 # include <sys/mman.h>
 # include <stdint.h>
 # include <stddef.h>
-#include "libft.h" 
-# include <stdio.h> // TODO: remove after debugging
+# include <pthread.h>
+#include "libft.h"
 
 # define ALIGNMENT 16
 
@@ -46,6 +46,7 @@ typedef struct s_malloc
 }   t_malloc;
 
 extern t_malloc g_malloc;
+extern pthread_mutex_t g_malloc_lock;
 
 /*
 ** implementations
@@ -54,6 +55,7 @@ void    *malloc(size_t size);
 void    free(void *ptr);
 void    check_leaks(void);
 void    *realloc(void *ptr, size_t size);
+void    show_alloc_mem(void);
 
 /*
 ** zone
