@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <pthread.h>
 #include <dlfcn.h>
+#include "malloc.h"
 
 #define TEST(name) printf("\n========== %s ==========\n", name)
 #define ASSERT(cond, msg) do { if (!(cond)) { printf("❌ FAIL: %s\n", msg); return (1); } else printf("✅ PASS: %s\n", msg); } while (0)
@@ -129,7 +130,7 @@ int test_zone_display(void)
 	void *small = malloc(500);
 	void *large = malloc(100000);
 	
-	// Chama show_alloc_mem dinamicamente via dlsym
+	// Call show_alloc_mem dynamically by dlsym
 	typedef void (*show_alloc_mem_t)(void);
 	show_alloc_mem_t show_alloc_mem_func = (show_alloc_mem_t)dlsym(RTLD_DEFAULT, "show_alloc_mem");
 	if (show_alloc_mem_func)

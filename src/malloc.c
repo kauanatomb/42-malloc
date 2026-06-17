@@ -28,6 +28,7 @@ void    *malloc(size_t size) {
     }
     zone->next = *zones;
     *zones = zone;
+    split_block(zone->blocks, aligned_size);
     zone->blocks->free = 0;
     
     void *ptr = get_block_payload(zone->blocks);

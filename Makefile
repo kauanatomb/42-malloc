@@ -29,8 +29,8 @@ libft/libft.a:
 	make -C libft
 
 test: $(NAME) test_malloc.c
-	$(CC) $(CCFLAGS) $(INCLUDES) -pthread test_malloc.c -o $(TEST_NAME)
-	LD_PRELOAD=./$(NAME) ./$(TEST_NAME)
+	$(CC) $(CCFLAGS) $(INCLUDES) -pthread test_malloc.c ./$(NAME) -o $(TEST_NAME)
+	./$(TEST_NAME)
 
 clean:
 	rm -f $(OBJ)
