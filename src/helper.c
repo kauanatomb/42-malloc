@@ -55,3 +55,68 @@ t_zone  *create_zone(size_t zone_size, t_zone_type type) {
 
     return zone;
 }
+
+static int	is_ptr_in_zone(t_zone *zone, void *ptr) {
+	char	*zone_start;
+	char	*zone_end;
+
+	if (!zone)
+		return (0);
+	
+	// after struct t_zone
+	zone_start = (char *)zone + sizeof(t_zone);
+	// end zone_start + zone->size
+	zone_end = zone_start + zone->size;
+	
+	// ptr is inside limits?
+	return ((char *)ptr >= zone_start && (char *)ptr < zone_end);
+}
+
+static int	is_valid_block(t_zone *zone, void *ptr) {
+	t_block	*block;
+
+	if (!zone || !ptr)
+		return (0);
+
+	block = zone->blocks;
+	while (block) {
+		// payload starts after struct t_block
+		void *payload = get_block_payload(block);
+		
+		if (ptr == payload && !block->free)
+			return (1);
+		
+		block = block->next;
+	}
+	return (0);
+}
+
+int	is_valid_ptr(void *ptr) {
+	t_zone	*zone;
+
+	if (!ptr)
+		return (0);
+
+	zone = g_malloc.tiny_zones;
+	while (zone) {
+        if (is_ptr_in_zone(zone, ptr) && is_valid_block(zone, ptr))
+                return 1;
+        zone = zone->next;
+    }
+
+	zone = g_malloc.small_zones;
+	while (zone) {
+        if (is_ptr_in_zone(zone, ptr) && is_valid_block(zone, ptr))
+                return 1;
+        zone = zone->next;
+    }
+
+	zone = g_malloc.large_zones;
+	while (zone) {
+        if (is_ptr_in_zone(zone, ptr) && is_valid_block(zone, ptr))
+                return 1;
+        zone = zone->next;
+    }
+
+	return (0);
+}
