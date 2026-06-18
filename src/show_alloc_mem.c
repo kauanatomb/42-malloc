@@ -61,100 +61,69 @@ static void	write_number(size_t n)
 	}
 }
 
-void	show_alloc_mem(void)
+static size_t print_block_info(t_block *block)
 {
-	t_zone	*zone;
-	t_block	*block;
-	size_t	total;
+    void *payload = get_block_payload(block);
+    write_hex((uintptr_t)payload);
+    write_str(" - ");
+    write_hex((uintptr_t)payload + block->size);
+    write_str(" : ");
+    write_number(block->size);
+    write_str(" bytes\n");
+    return block->size;
+}
 
-	pthread_mutex_lock(&g_malloc_lock);
+static size_t print_zone_blocks(t_zone *zone)
+{
+    size_t total = 0;
+    t_block *block = zone->blocks;
+    while (block) {
+        if (!block->free)
+            total += print_block_info(block);
+        block = block->next;
+    }
+    return total;
+}
 
-	total = 0;
+static size_t print_zones_of_type(t_zone_type type, const char *label, int per_zone_header)
+{
+    t_zone *zone = *get_zones_list(type);
+    if (!zone)
+        return 0;
 
-	zone = *get_zones_list(TINY);
-	if (zone)
-	{
-		write_str("TINY : ");
-		write_hex((uintptr_t)zone);
-		write_str("\n");
-		while (zone)
-		{
-			block = zone->blocks;
-			while (block)
-			{
-				if (!block->free)
-				{
-					write_hex((uintptr_t)get_block_payload(block));
-					write_str(" - ");
-					write_hex((uintptr_t)get_block_payload(block) + block->size);
-					write_str(" : ");
-					write_number(block->size);
-					write_str(" bytes\n");
-					total += block->size;
-				}
-				block = block->next;
-			}
-			zone = zone->next;
-		}
-	}
+    size_t total = 0;
 
-	zone = *get_zones_list(SMALL);
-	if (zone)
-	{
-		write_str("SMALL : ");
-		write_hex((uintptr_t)zone);
-		write_str("\n");
-		while (zone)
-		{
-			block = zone->blocks;
-			while (block)
-			{
-				if (!block->free)
-				{
-					write_hex((uintptr_t)get_block_payload(block));
-					write_str(" - ");
-					write_hex((uintptr_t)get_block_payload(block) + block->size);
-					write_str(" : ");
-					write_number(block->size);
-					write_str(" bytes\n");
-					total += block->size;
-				}
-				block = block->next;
-			}
-			zone = zone->next;
-		}
-	}
+    if (!per_zone_header) {
+        write_str(label);
+        write_str(" : ");
+        write_hex((uintptr_t)zone);
+        write_str("\n");
+    }
 
-	zone = *get_zones_list(LARGE);
-	if (zone)
-	{
-		while (zone)
-		{
-			write_str("LARGE : ");
-			write_hex((uintptr_t)zone);
-			write_str("\n");
-			block = zone->blocks;
-			while (block)
-			{
-				if (!block->free)
-				{
-					write_hex((uintptr_t)get_block_payload(block));
-					write_str(" - ");
-					write_hex((uintptr_t)get_block_payload(block) + block->size);
-					write_str(" : ");
-					write_number(block->size);
-					write_str(" bytes\n");
-					total += block->size;
-				}
-				block = block->next;
-			}
-			zone = zone->next;
-		}
-	}
+    while (zone) {
+        if (per_zone_header) {
+            write_str(label);
+            write_str(" : ");
+            write_hex((uintptr_t)zone);
+            write_str("\n");
+        }
+        total += print_zone_blocks(zone);
+        zone = zone->next;
+    }
+    return total;
+}
 
-	write_str("Total : ");
-	write_number(total);
-	write_str(" bytes\n");
+void show_alloc_mem(void)
+{
+    pthread_mutex_lock(&g_malloc_lock);
 
-	pthread_mutex_unlock(&g_malloc_lock);
+    size_t total = print_zones_of_type(TINY,  "TINY",  0);
+    total += print_zones_of_type(SMALL, "SMALL", 0);
+    total += print_zones_of_type(LARGE, "LARGE", 1);
+
+    write_str("Total : ");
+    write_number(total);
+    write_str(" bytes\n");
+
+    pthread_mutex_unlock(&g_malloc_lock);
 }
