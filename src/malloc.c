@@ -21,7 +21,17 @@ void    *malloc(size_t size) {
         }
         zone = zone->next;
     }
-    zone = create_zone(get_zone_size(zone_type), zone_type);
+
+    size_t zone_size;
+    if (zone_type == LARGE) {
+        zone_size = sizeof(t_zone) + sizeof(t_block) + aligned_size;
+        size_t page = getpagesize();
+        zone_size = (zone_size + page - 1) & ~(page - 1);
+    } else {
+        zone_size = get_zone_size(zone_type);
+    }
+
+    zone = create_zone(zone_size, zone_type);
     if (!zone) {
         pthread_mutex_unlock(&g_malloc_lock);
         return NULL;

@@ -2,7 +2,7 @@
 
 // alignment architectural 
 size_t  align_size(size_t size) {
-    return (size + (ALIGNMENT - 1) & ~(ALIGNMENT - 1));
+    return (size + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1);
 }
 
 // zone cannot be too small
