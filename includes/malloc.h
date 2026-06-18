@@ -77,5 +77,6 @@ t_zone  **get_zones_list(t_zone_type type);
 size_t  align_size(size_t size);
 size_t  get_zone_size(t_zone_type type);
 t_zone_type get_zone_type(size_t size);
+int     is_valid_ptr(void *ptr) ;
 
 #endif

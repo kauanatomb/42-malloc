@@ -6,6 +6,11 @@ void    free(void *ptr) {
 
     pthread_mutex_lock(&g_malloc_lock);
 
+    if (!is_valid_ptr(ptr)) {
+        pthread_mutex_unlock(&g_malloc_lock);
+        return;
+    }
+
     t_block *block = (t_block *)ptr - 1;
     block->free = 1;
 
