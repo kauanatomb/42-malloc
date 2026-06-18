@@ -1,10 +1,7 @@
 #ifndef MALLOC_H
 # define MALLOC_H
 
-# include <unistd.h>
 # include <sys/mman.h>
-# include <stdint.h>
-# include <stddef.h>
 # include <pthread.h>
 #include "libft.h"
 

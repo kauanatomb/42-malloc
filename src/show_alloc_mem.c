@@ -1,12 +1,7 @@
 #include "malloc.h"
-#include <unistd.h>
 
-static void	write_str(const char *s)
-{
-	size_t len = 0;
-	while (s[len])
-		len++;
-	write(1, s, len);
+static void	write_str(const char *s) {
+	ft_putstr_fd((char *)s, 1);
 }
 
 static void	write_hex(uintptr_t n)
@@ -17,7 +12,7 @@ static void	write_hex(uintptr_t n)
 
 	if (n == 0)
 	{
-		write(1, "0x0", 3);
+		ft_putstr_fd("0x0", 1);
 		return ;
 	}
 
@@ -30,11 +25,11 @@ static void	write_hex(uintptr_t n)
 		i++;
 	}
 
-	write(1, "0x", 2);
+	ft_putstr_fd("0x", 1);
 	while (i > 0)
 	{
 		i--;
-		write(1, &buf[i], 1);
+		ft_putchar_fd(buf[i], 1);
 	}
 }
 
@@ -46,7 +41,7 @@ static void	write_number(size_t n)
 
 	if (n == 0)
 	{
-		write(1, "0", 1);
+		ft_putchar_fd('0', 1);
 		return ;
 	}
 
@@ -62,7 +57,7 @@ static void	write_number(size_t n)
 	while (i > 0)
 	{
 		i--;
-		write(1, &buf[i], 1);
+		ft_putchar_fd(buf[i], 1);
 	}
 }
 
@@ -133,11 +128,11 @@ void	show_alloc_mem(void)
 	zone = *get_zones_list(LARGE);
 	if (zone)
 	{
-		write_str("LARGE : ");
-		write_hex((uintptr_t)zone);
-		write_str("\n");
 		while (zone)
 		{
+			write_str("LARGE : ");
+			write_hex((uintptr_t)zone);
+			write_str("\n");
 			block = zone->blocks;
 			while (block)
 			{
