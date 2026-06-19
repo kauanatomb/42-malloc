@@ -10,11 +10,16 @@ void    split_block(t_block *block, size_t size) {
 
     size_t remaining = block->size - size - sizeof(t_block);
     void *payload = block + 1;
-    t_block * new_block = (t_block *)((char *)payload + size);
+    t_block *new_block = (t_block *)((char *)payload + size);
+    t_block *old_next = block->next;
 
     new_block->size = remaining;
     new_block->free = 1;
-    new_block->next = block->next;
+    new_block->next = old_next;
+    new_block->prev = block;
+
+    if (old_next)
+        old_next->prev = new_block;
 
     block->size = size;
     block->next = new_block;

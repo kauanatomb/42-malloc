@@ -51,6 +51,7 @@ t_zone  *create_zone(size_t zone_size, t_zone_type type) {
     block->size = zone_size - sizeof(t_zone) - sizeof(t_block);
     block->free = 1;
     block->next = NULL;
+    block->prev = NULL;
     zone->blocks = block;
 
     return zone;
