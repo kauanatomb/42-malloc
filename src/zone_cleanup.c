@@ -14,39 +14,28 @@ static int	is_zone_empty(t_zone *zone)
 	return (1);
 }
 
-void	cleanup_empty_zones(void)
+t_zone	*block_to_zone(t_block *block)
 {
-	t_zone_type	types[] = {TINY, SMALL, LARGE};
-	int			i;
-	t_zone		**zones_list;
-	t_zone		*zone;
-	t_zone		*prev;
+	return ((t_zone *)((char *)block - sizeof(t_zone)));
+}
 
-	i = 0;
-	while (i < 3)
+void	cleanup_zone_if_empty(t_zone *zone)
+{
+	t_zone	**head;
+	t_zone	*cur;
+
+	if (!zone || !is_zone_empty(zone))
+		return;
+	head = get_zones_list(zone->type);
+	if (*head == zone)
+		*head = zone->next;
+	else
 	{
-		zones_list = get_zones_list(types[i]);
-		zone = *zones_list;
-		prev = NULL;
-
-		while (zone)
-		{
-			if (is_zone_empty(zone))
-			{
-				if (prev)
-					prev->next = zone->next;
-				else
-					*zones_list = zone->next;
-
-				munmap(zone, zone->size);
-				zone = prev ? prev->next : *zones_list;
-			}
-			else
-			{
-				prev = zone;
-				zone = zone->next;
-			}
-		}
-		i++;
+		cur = *head;
+		while (cur && cur->next != zone)
+			cur = cur->next;
+		if (cur)
+			cur->next = zone->next;
 	}
+	munmap(zone, zone->size);
 }

@@ -50,11 +50,11 @@ extern pthread_mutex_t g_malloc_lock;
 ** implementations
 */
 void    *malloc(size_t size);
-void    free(void *ptr);
 void    check_leaks(void);
 void    *realloc(void *ptr, size_t size);
 void    show_alloc_mem(void);
-void    cleanup_empty_zones(void);
+void    free(void *ptr);
+void    cleanup_zone_if_empty(t_zone *zone);
 
 /*
 ** zone
@@ -68,6 +68,7 @@ t_block *find_free_block(t_zone *zone, size_t size);
 void    split_block(t_block *block, size_t size);
 void    *get_block_payload(t_block *block);
 t_zone  **get_zones_list(t_zone_type type);
+t_zone  *block_to_zone(t_block *block);
 
 /*
 ** utils

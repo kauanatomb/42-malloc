@@ -14,13 +14,25 @@ void    free(void *ptr) {
     t_block *block = (t_block *)ptr - 1;
     block->free = 1;
 
-    while (block->next && block->next->free)
-    {
-        block->size += sizeof(t_block) + block->next->size;
-        block->next = block->next->next;
+    if (block->prev && block->prev->free) {
+        t_block *prev = block->prev;
+        prev->size += sizeof(t_block) + block->size;
+        prev->next = block->next;
+        if (block->next)
+            block->next->prev = prev;
+        block = prev;
     }
 
-    cleanup_empty_zones();
+    if (block->next && block->next->free) {
+        t_block *next = block->next;
+        block->size += sizeof(t_block) + next->size;
+        block->next = next->next;
+        if (block->next)
+            block->next->prev = block;
+    }
+
+    if (!block->prev && !block->next)
+        cleanup_zone_if_empty(block_to_zone(block));
 
     pthread_mutex_unlock(&g_malloc_lock);
 }
