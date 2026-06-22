@@ -1,9 +1,4 @@
-#include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <pthread.h>
-#include <dlfcn.h>
 #include "malloc.h"
 
 #define TEST(name) printf("\n========== %s ==========\n", name)
@@ -13,8 +8,8 @@ int test_basic_malloc(void)
 {
 	TEST("Basic malloc");
 	void *a = malloc(64);
-	ASSERT(a != NULL, "malloc returned NULL");
-	memset(a, 42, 64);
+	ASSERT(a != NULL, "malloc returned different from NULL");
+	ft_memset(a, 42, 64);
 	free(a);
 	return (0);
 }
@@ -47,8 +42,8 @@ int test_split(void)
 	void *b = malloc(100);
 	ASSERT(a != NULL && b != NULL, "split allocation succeeded");
 	
-	memset(a, 1, 500);
-	memset(b, 2, 100);
+	ft_memset(a, 1, 500);
+	ft_memset(b, 2, 100);
 	free(a);
 	free(b);
 	return (0);
@@ -58,7 +53,7 @@ int test_realloc_grow(void)
 {
 	TEST("Realloc grow");
 	void *a = malloc(100);
-	memset(a, 42, 100);
+	ft_memset(a, 42, 100);
 	
 	void *b = realloc(a, 200);
 	ASSERT(b != NULL, "realloc grow succeeded");
@@ -72,7 +67,7 @@ int test_realloc_shrink(void)
 {
 	TEST("Realloc shrink");
 	void *a = malloc(500);
-	memset(a, 99, 500);
+	ft_memset(a, 99, 500);
 	
 	void *b = realloc(a, 100);
 	ASSERT(b != NULL, "realloc shrink succeeded");
@@ -99,7 +94,7 @@ int test_many_allocations(void)
 	for (int i = 0; i < 100; i++) {
 		ptrs[i] = malloc(64 + i);
 		ASSERT(ptrs[i] != NULL, "allocation succeeded");
-		memset(ptrs[i], i, 64 + i);
+		ft_memset(ptrs[i], i, 64 + i);
 	}
 	
 	for (int i = 0; i < 100; i++)
@@ -115,8 +110,8 @@ int test_large_allocation(void)
 	void *b = malloc(200000);
 	
 	ASSERT(a != NULL && b != NULL, "large allocations succeeded");
-	memset(a, 1, 100000);
-	memset(b, 2, 200000);
+	ft_memset(a, 1, 100000);
+	ft_memset(b, 2, 200000);
 	
 	free(a);
 	free(b);
@@ -130,13 +125,7 @@ int test_zone_display(void)
 	void *small = malloc(500);
 	void *large = malloc(100000);
 	
-	// Call show_alloc_mem dynamically by dlsym
-	typedef void (*show_alloc_mem_t)(void);
-	show_alloc_mem_t show_alloc_mem_func = (show_alloc_mem_t)dlsym(RTLD_DEFAULT, "show_alloc_mem");
-	if (show_alloc_mem_func)
-		show_alloc_mem_func();
-	else
-		printf("(show_alloc_mem not available)\n");
+	show_alloc_mem();
 	
 	free(tiny);
 	free(small);
@@ -153,7 +142,7 @@ void	*thread_malloc(void *arg)
 		ptrs[i] = malloc(100 + (id * 10) + i);
 		if (!ptrs[i])
 			return NULL;
-		memset(ptrs[i], id, 100 + (id * 10) + i);
+		ft_memset(ptrs[i], id, 100 + (id * 10) + i);
 	}
 	
 	for (int i = 0; i < 10; i++)

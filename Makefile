@@ -29,7 +29,7 @@ libft/libft.a:
 	make -C libft
 
 test: $(NAME) test_malloc.c
-	$(CC) $(CCFLAGS) $(INCLUDES) -pthread test_malloc.c ./$(NAME) -o $(TEST_NAME)
+	$(CC) $(CCFLAGS) $(INCLUDES) -pthread test_malloc.c -Llibft -lft ./$(NAME) -o $(TEST_NAME)
 	./$(TEST_NAME)
 
 clean:
