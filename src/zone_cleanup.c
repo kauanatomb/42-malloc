@@ -1,6 +1,6 @@
 #include "malloc.h"
 
-static int	is_zone_empty(t_zone *zone)
+int	is_zone_empty(t_zone *zone)
 {
 	t_block *block;
 

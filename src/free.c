@@ -1,40 +1,55 @@
 #include "malloc.h"
 
-void    free(void *ptr) {
-    if (!ptr)
-        return ;
+static int	has_other_empty_zone(t_zone *zones, t_zone *current, t_zone_type type) {
+	while (zones) {
+		if (zones != current && zones->type == type && is_zone_empty(zones))
+			return (1);
+		zones = zones->next;
+	}
+	return (0);
+}
 
-    pthread_mutex_lock(&g_malloc_lock);
+static t_block	*coalesce_free_blocks(t_block *block) {
+	if (block->prev && block->prev->free) {
+		t_block *prev = block->prev;
+		prev->size += sizeof(t_block) + block->size;
+		prev->next = block->next;
+		if (block->next)
+			block->next->prev = prev;
+		block = prev;
+	}
+	if (block->next && block->next->free) {
+		t_block *next = block->next;
+		block->size += sizeof(t_block) + next->size;
+		block->next = next->next;
+		if (block->next)
+			block->next->prev = block;
+	}
+	return (block);
+}
 
-    if (!is_valid_ptr(ptr)) {
-        pthread_mutex_unlock(&g_malloc_lock);
-        return;
-    }
+void	free(void *ptr) {
+	if (!ptr)
+		return ;
 
-    t_block *block = (t_block *)ptr - 1;
-    block->free = 1;
+	pthread_mutex_lock(&g_malloc_lock);
 
-    if (block->prev && block->prev->free) {
-        t_block *prev = block->prev;
-        prev->size += sizeof(t_block) + block->size;
-        prev->next = block->next;
-        if (block->next)
-            block->next->prev = prev;
-        block = prev;
-    }
+	if (!is_valid_ptr(ptr)) {
+		pthread_mutex_unlock(&g_malloc_lock);
+		return;
+	}
 
-    if (block->next && block->next->free) {
-        t_block *next = block->next;
-        block->size += sizeof(t_block) + next->size;
-        block->next = next->next;
-        if (block->next)
-            block->next->prev = block;
-    }
+	t_block *block = (t_block *)ptr - 1;
+	block->free = 1;
+	block = coalesce_free_blocks(block);
 
-    if (!block->prev && !block->next)
-        cleanup_zone_if_empty(block_to_zone(block));
+	if (!block->prev && !block->next) {
+		t_zone *zone = block_to_zone(block);
+		if (has_other_empty_zone(*get_zones_list(zone->type), zone, zone->type))
+			cleanup_zone_if_empty(zone);
+	}
 
-    pthread_mutex_unlock(&g_malloc_lock);
+	pthread_mutex_unlock(&g_malloc_lock);
 }
 
 void    check_leaks(void) {

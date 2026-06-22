@@ -60,6 +60,7 @@ void    cleanup_zone_if_empty(t_zone *zone);
 ** zone
 */
 t_zone  *create_zone(size_t zone_size, t_zone_type type);
+int     is_zone_empty(t_zone *zone);
 
 /*
 ** block
