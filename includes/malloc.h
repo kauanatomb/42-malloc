@@ -3,6 +3,7 @@
 
 # include <sys/mman.h>
 # include <pthread.h>
+# include <stdint.h>
 #include "libft.h"
 
 # define ALIGNMENT 16
@@ -78,5 +79,7 @@ size_t  align_size(size_t size);
 size_t  get_zone_size(t_zone_type type);
 t_zone_type get_zone_type(size_t size);
 int     is_valid_ptr(void *ptr) ;
+size_t  get_page_size(void);
+int     is_size_too_large(size_t size);
 
 #endif

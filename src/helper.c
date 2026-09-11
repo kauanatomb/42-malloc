@@ -1,5 +1,20 @@
 #include "malloc.h"
 
+// getpagesize() on OSX, sysconf(_SC_PAGESIZE) on Linux, as required by the subject
+size_t  get_page_size(void) {
+#ifdef __APPLE__
+    return getpagesize();
+#else
+    return sysconf(_SC_PAGESIZE);
+#endif
+}
+
+int is_size_too_large(size_t size) {
+    size_t max_size = SIZE_MAX - ALIGNMENT - sizeof(t_zone) - sizeof(t_block) - (1 << 20);
+
+    return (size > max_size);
+}
+
 // alignment architectural 
 size_t  align_size(size_t size) {
     return (size + (ALIGNMENT - 1)) & ~(ALIGNMENT - 1);
@@ -7,7 +22,7 @@ size_t  align_size(size_t size) {
 
 // zone cannot be too small
 size_t  get_zone_size(t_zone_type type) {
-    size_t page = getpagesize();
+    size_t page = get_page_size();
 
     if (type == TINY)
         return page * 32;
@@ -66,8 +81,8 @@ static int	is_ptr_in_zone(t_zone *zone, void *ptr) {
 	
 	// after struct t_zone
 	zone_start = (char *)zone + sizeof(t_zone);
-	// end zone_start + zone->size
-	zone_end = zone_start + zone->size;
+	// zone->size already covers the whole mmap'd region, header included
+	zone_end = (char *)zone + zone->size;
 	
 	// ptr is inside limits?
 	return ((char *)ptr >= zone_start && (char *)ptr < zone_end);
