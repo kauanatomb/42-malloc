@@ -26,19 +26,15 @@ void    split_block(t_block *block, size_t size) {
 }
 
 t_block *find_free_block(t_zone *zone, size_t size) {
-    t_zone *cur = zone;
-    while (cur) {
-        t_block *cur_b = cur->blocks;
-        while (cur_b) {
-            if (cur_b->free && cur_b->size >= size) {
-                if (cur_b->size >= size + sizeof(t_block) + ALIGNMENT)
-                    split_block(cur_b, size);
-                cur_b->free = 0;
-                return cur_b;
-            }
-            cur_b = cur_b->next;
+    t_block *cur_b = zone->blocks;
+    while (cur_b) {
+        if (cur_b->free && cur_b->size >= size) {
+            if (cur_b->size >= size + sizeof(t_block) + ALIGNMENT)
+                split_block(cur_b, size);
+            cur_b->free = 0;
+            return cur_b;
         }
-        cur = cur->next;
+        cur_b = cur_b->next;
     }
     return NULL;
 }

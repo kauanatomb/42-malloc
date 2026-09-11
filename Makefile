@@ -15,9 +15,9 @@ CC = cc
 CCFLAGS = -Wall -Wextra -Werror -fPIC -MMD -MP
 INCLUDES = -Iincludes -Ilibft
 
-all: libft/libft.a $(NAME) $(LINK_NAME)
+all: libft $(NAME) $(LINK_NAME)
 
-$(NAME): $(OBJ) libft/libft.a
+$(NAME): $(OBJ) libft
 	$(CC) $(CCFLAGS) -shared $(OBJ) -Llibft -lft -lpthread -o $(NAME)
 
 $(LINK_NAME): $(NAME)
@@ -26,7 +26,7 @@ $(LINK_NAME): $(NAME)
 %.o: %.c
 	$(CC) $(CCFLAGS) $(INCLUDES) -c $< -o $@
 
-libft/libft.a:
+libft:
 	make -C libft
 
 test: $(NAME) test_malloc.c
