@@ -29,7 +29,7 @@ static t_zone *create_new_zone(t_zone_type type, size_t aligned_size) {
 
     if (type == LARGE) {
         zone_size = sizeof(t_zone) + sizeof(t_block) + aligned_size;
-        size_t page = getpagesize();
+        size_t page = get_page_size();
         zone_size = (zone_size + page - 1) & ~(page - 1);
     } else {
         zone_size = get_zone_size(type);
@@ -38,7 +38,7 @@ static t_zone *create_new_zone(t_zone_type type, size_t aligned_size) {
 }
 
 void *malloc(size_t size) {
-    if (size == 0)
+    if (size == 0 || is_size_too_large(size))
         return NULL;
 
     pthread_mutex_lock(&g_malloc_lock);

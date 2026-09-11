@@ -9,6 +9,9 @@ void *realloc(void *ptr, size_t size) {
         return NULL;
     }
 
+    if (is_size_too_large(size))
+        return NULL;
+
     pthread_mutex_lock(&g_malloc_lock);
 
     if (!is_valid_ptr(ptr)) {

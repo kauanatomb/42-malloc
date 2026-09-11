@@ -9,9 +9,10 @@ TEST_NAME = test_malloc
 SRC = src/malloc.c src/helper.c src/globals.c src/block/block_utils.c \
 		src/free.c src/realloc.c src/show_alloc_mem.c src/zone_cleanup.c
 OBJ = $(SRC:.c=.o)
+DEPS = $(SRC:.c=.d)
 
 CC = cc
-CCFLAGS = -Wall -Wextra -Werror -fPIC
+CCFLAGS = -Wall -Wextra -Werror -fPIC -MMD -MP
 INCLUDES = -Iincludes -Ilibft
 
 all: libft/libft.a $(NAME) $(LINK_NAME)
@@ -33,7 +34,7 @@ test: $(NAME) test_malloc.c
 	./$(TEST_NAME)
 
 clean:
-	rm -f $(OBJ)
+	rm -f $(OBJ) $(DEPS)
 	make clean -C libft
 
 fclean: clean
@@ -43,3 +44,5 @@ fclean: clean
 re: fclean all
 
 .PHONY: all clean fclean re libft test
+
+-include $(DEPS)
