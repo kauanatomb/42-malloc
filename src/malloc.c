@@ -38,8 +38,10 @@ static t_zone *create_new_zone(t_zone_type type, size_t aligned_size) {
 }
 
 void *malloc(size_t size) {
-    if (size == 0 || is_size_too_large(size))
+    if (is_size_too_large(size))
         return NULL;
+    if (size == 0)
+        size = 1;
 
     pthread_mutex_lock(&g_malloc_lock);
 

@@ -23,7 +23,8 @@ void *realloc(void *ptr, size_t size) {
     size_t aligned = align_size(size);
 
     if (block->size >= aligned) {
-        if (block->size >= aligned + sizeof(t_block) + ALIGNMENT)
+        if (get_zone_type(block->size) != LARGE
+            && block->size >= aligned + sizeof(t_block) + ALIGNMENT)
             split_block(block, aligned);
 
         pthread_mutex_unlock(&g_malloc_lock);
